@@ -7,7 +7,7 @@
  */
 int usage_error(void)
 {
-	write(STDERR_FILENO, "USAGE: monty file\n", 18);
+	fprint(stderr, "USAGE: monty file\n");
 	return (EXIT_FAILURE);
 }
 
@@ -30,7 +30,7 @@ int f_open_error(char *filename)
  */
 int malloc_error(void)
 {
-	write(STDERR_FILENO, "Error: malloc failed\n", 21);
+	fprintf(stderr, "Error: malloc failed\n");
 	return (EXIT_FAILURE);
 }
 
