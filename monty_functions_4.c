@@ -55,29 +55,3 @@ void monty_rotr(stack_t **stack, unsigned int line_number)
 
 	(void)line_number;
 }
-
-/**
- * monty_stack - converts a queue to a stack
- * @stack: pointer to the head of stack or tail of queue
- * @line_number: current line number being executed
- *
- * Return: void
- */
-void monty_stack(stack_t **stack, unsigned int line_number)
-{
-	(*stack)->n = STACK;
-	(void)line_number;
-}
-
-/**
- * monty_queue - converts a atack to a queue
- * @stack: poimter to the top of stack or tail of queue
- * @line_number: current line number being executed
- *
- * Return: void
- */
-void monty_queue(stack_t **stack, unsigned int line_number)
-{
-	(*stack)->n = QUEUE;
-	(void)line_number;
-}

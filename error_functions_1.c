@@ -7,7 +7,7 @@
  */
 int usage_error(void)
 {
-	fprint(stderr, "USAGE: monty file\n");
+	fprintf(stderr, "USAGE: monty file\n");
 	return (EXIT_FAILURE);
 }
 
