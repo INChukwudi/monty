@@ -16,37 +16,43 @@ void free_tokens(void)
 }
 
 /**
- * free_stack - frees a stack from memory
- * @stack: pointer to head or tail of stack
+ * token_arr_len - gets th elength of current op_toks
  *
- * Return: void
+ * Return: length of current op_toks as int
  */
-void free_stack(stack_t **stack)
+unsigned int token_arr_len(void)
 {
-	stack_t *tmp = NULL, *iter = NULL;
+	unsigned int toks_len = 0;
 
-	if (stack && *stack)
+	while (op_toks[toks_len])
+		toks_len++;
+	
+	return toks_len;
+}
+
+/**
+ * is_empty_line - checks if the line read only contains delimters
+ * @line: pointer to the line
+ * @delims: string of delimter characters
+ *
+ * Return: 1 - if the line conatins only delimiters
+ *         0 - if it doesn't
+ */
+int is_empty_line(char *line, char *delims)
+{
+	int i, j;
+
+	for (i = 0; line[i]; i++)
 	{
-		tmp = *stack;
-		if ((*stack)->next == NULL)
+		for (j = 0; delims[j]; j++)
 		{
-			while (tmp)
-			{
-				iter = tmp->prev;
-				free(tmp);
-				tmp = iter;
-			}
+			if (line[i] == delims[j])
+				break;
 		}
-		else
-		{
-			while (tmp)
-			{
-				iter = tmp->next;
-				free(tmp);
-				tmp = iter;
-			}
-		}
+		if (delims[j] == '\0')
+			return (0);
 	}
+	return (1);
 }
 
 /**
@@ -93,19 +99,25 @@ int run_monty(FILE *script_fd)
 {
 	stack_t *stack = NULL;
 	char *line = NULL;
-	size_t len = 0;
-	unsigned int line_number = 1;
+	size_t len = 0, exit_status = EXIT_SUCCESS;
+	unsigned int line_number = 0, prev_tok_len = 0;
 	void (*op_func)(stack_t**, unsigned int);
+
+	if (init_stack(&stack) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
 
 	while (getline(&line, &len, script_fd) != -1)
 	{
-		op_toks = strtow(line, " \n\t\a\b");
+		line_number++;
+		op_toks = strtow(line, DELIMS);
 		if (op_toks == NULL)
 		{
+			if (is_empty_line(line, DELIMS))
+				continue;
 			free_stack(&stack);
 			return (malloc_error());
 		}
-		if (op_toks[0][0] == '#')
+		else if (op_toks[0][0] == '#')
 		{
 			free_tokens();
 			continue;
@@ -113,12 +125,22 @@ int run_monty(FILE *script_fd)
 		op_func = get_op_func(op_toks[0]);
 		if (op_func == NULL)
 		{
-			free_tokens();
 			free_stack(&stack);
-			return (unknown_op_error(op_toks[0], line_number));
+			exit_status = unknown_op_error(op_toks[0], line_number);
+			free_tokens();
+			break;
 		}
+		prev_tok_len = token_arr_len();
 		op_func(&stack, line_number);
-		line_number++;
+		if (token_arr_len() != prev_tok_len)
+		{
+			if (op_toks && op_toks[prev_tok_len])
+				exit_status = atoi(op_toks[prev_tok_len]);
+			else
+				exit_status = EXIT_FAILURE;
+			free_tokens();
+			break;
+		}
 		free_tokens();
 	}
 	free_stack(&stack);
@@ -128,5 +150,5 @@ int run_monty(FILE *script_fd)
 		return (malloc_error());
 	}
 	free(line);
-	return (EXIT_SUCCESS);
+	return (exit_status);
 }

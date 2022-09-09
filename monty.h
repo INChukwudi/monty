@@ -10,6 +10,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#define STACK 0
+#define QUEUE 1
+#define DELIMS " \n\t\a\b"
+
 extern char **op_toks;
 
 /**
@@ -39,8 +43,13 @@ typedef struct instruction_s
 int run_monty(FILE *script_fd);
 void free_tokens(void);
 void free_stack(stack_t **stack);
+int check_mode(stack_t *stack);
+int init_stack(stack_t **stack);
+void set_op_tok_error(int error_code);
+unsigned int token_arr_len(void);
 
 char **strtow(char *str, char *delim);
+char *get_int(int n);
 
 int usage_error(void);
 int f_open_error(char *filename);

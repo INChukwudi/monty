@@ -20,15 +20,10 @@ void monty_nop(stack_t **stack, unsigned int line_number)
  */
 void monty_pint(stack_t **stack, unsigned int line_number)
 {
-	stack_t *tmp = NULL;
-
-	if (!stack || !(*stack))
+	if ((*stack)->next == NULL)
 	{
-		pint_error(line_number);
+		set_op_tok_error(pint_error(line_number));
 		return;
 	}
-	tmp = *stack;
-	while (tmp->prev != NULL)
-		tmp = tmp->prev;
-	printf("%d\n", tmp->n);
+	printf("%d\n", (*stack)->next->n);
 }
