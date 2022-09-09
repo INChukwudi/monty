@@ -96,7 +96,6 @@ int run_monty(FILE *script_fd)
 	size_t len = 0;
 	unsigned int line_number = 1;
 	void (*op_func)(stack_t**, unsigned int);
-	int read = -1;
 
 	while (getline(&line, &len, script_fd) != -1)
 	{
